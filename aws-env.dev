@@ -17,19 +17,23 @@
 
     export PROJECT=lambda2sqs
     export DEPLOY_S3_PREFIX=lambda2sqs
-    export STAGE=dev
     export STACK_NAME=$PROJECT
 
 # Variables that are maintained in the AWS parameter store for the environment:
 
     export AWS_REGION=$(getparam DEFAULT_REGION)
+    export STAGE=$(getparam STAGE)
+
     export DEFAULT_SECURITY_GROUP=$(getparam DEFAULT_SECURITY_GROUP)
+
     export PRIVATE_SUBNET_1=$(getparam PRIVATE_SUBNET_1)
     export PRIVATE_SUBNET_2=$(getparam PRIVATE_SUBNET_2)
     export PRIVATE_SUBNET_3=$(getparam PRIVATE_SUBNET_3)
+
     export MYSQL_PASSWORD=$(getparam UNTEDB_ROOT_PASS)
     export MYSQL_USER=$(getparam UNTEDB_ROOT_USER)
     export MYSQL_HOST=$(getparam UNTEDB_HOST)
+
     export UNTE_DB_NAME=$(getparam UNTE_DB_NAME)
     export S3_BUCKET_NAME=$(getparam S3_BUCKET_NAME)
 
