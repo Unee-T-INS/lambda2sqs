@@ -9,13 +9,11 @@ Globals:
 Parameters:
   DefaultSecurityGroup:
     Type: String
-# Comment this line to avoid confusion, the default is set in aws-env.$STAGE file
-#    Default: sg-66390301
+    Default: sg-66390301
   PrivateSubnets:
     Type: String
-# Comment this line to avoid confusion, the default is set in aws-env.$STAGE file
-    # Default: >
-    #   subnet-07c9e20d6d4e35a64,subnet-0938728dfb344b970,subnet-0e123bd457c082cff
+    Default: >
+      subnet-07c9e20d6d4e35a64,subnet-0938728dfb344b970,subnet-0e123bd457c082cff
 
 Resources:
   Push:
