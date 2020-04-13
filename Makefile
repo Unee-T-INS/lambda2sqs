@@ -70,9 +70,6 @@ validate: template.yaml
 	sam validate --profile $(TRAVIS_PROFILE) --template template.yaml
 
 dev: build
-	sam package --profile $(TRAVIS_PROFILE_DEV) --template-file template.yaml --s3-bucket $(call ssm,S3_BUCKET_NAME) --s3-prefix $(DEPLOY_S3_PREFIX) --output-template-file packaged.yaml
-	sam deploy --profile $(TRAVIS_PROFILE_DEV) --template-file ./packaged.yaml --stack-name $(STACK_NAME) --capabilities CAPABILITY_IAM \
-	--parameter-overrides DefaultSecurityGroup=$(call ssm,DEFAULT_SECURITY_GROUP),$(call ssm,LAMBDA_TO_RDS_SECURITY_GROUP) PrivateSubnets=$(call ssm,PRIVATE_SUBNET_1),$(call ssm,PRIVATE_SUBNET_2),$(call ssm,PRIVATE_SUBNET_3)
 	# The current TRAVIS_PROFILE is: 
 	echo '# The TRAVIS_PROFILE:' $(TRAVIS_PROFILE)
 	# The profile we will use for deployment is
@@ -94,12 +91,13 @@ dev: build
 	echo '# The PRIVATE_SUBNET_2: ' $(call ssm,PRIVATE_SUBNET_2)
 	# - PRIVATE_SUBNET_3
 	echo '# The PRIVATE_SUBNET_3: ' $(call ssm,PRIVATE_SUBNET_3)
+	# Deploy the lambda with sam
+	sam package --profile $(TRAVIS_PROFILE_DEV) --template-file template.yaml --s3-bucket $(call ssm,S3_BUCKET_NAME) --s3-prefix $(DEPLOY_S3_PREFIX) --output-template-file packaged.yaml
+	sam deploy --profile $(TRAVIS_PROFILE_DEV) --template-file ./packaged.yaml --stack-name $(STACK_NAME) --capabilities CAPABILITY_IAM \
+	--parameter-overrides DefaultSecurityGroup=$(call ssm,DEFAULT_SECURITY_GROUP) PrivateSubnets=$(call ssm,PRIVATE_SUBNET_1),$(call ssm,PRIVATE_SUBNET_2),$(call ssm,PRIVATE_SUBNET_3)
 	# END this is dev in Makefile
 
 prod: build
-	sam package --profile $(TRAVIS_PROFILE_PROD) --template-file template.yaml --s3-bucket $(call ssm-prod,S3_BUCKET_NAME) --s3-prefix $(DEPLOY_S3_PREFIX) --output-template-file packaged.yaml
-	sam deploy --profile $(TRAVIS_PROFILE_PROD) --template-file ./packaged.yaml --stack-name $(STACK_NAME) --capabilities CAPABILITY_IAM \
-	--parameter-overrides DefaultSecurityGroup=$(call ssm-prod,DEFAULT_SECURITY_GROUP),$(call ssm-prod,LAMBDA_TO_RDS_SECURITY_GROUP)  PrivateSubnets=$(call ssm-prod,PRIVATE_SUBNET_1),$(call ssm-prod,PRIVATE_SUBNET_2),$(call ssm-prod,PRIVATE_SUBNET_3)
 	# add more info to facilitate debugging
 	# START this is `prod` in Makefile
 	# The current TRAVIS_PROFILE is: 
@@ -123,12 +121,13 @@ prod: build
 	echo '# The PRIVATE_SUBNET_2: ' $(call ssm-prod,PRIVATE_SUBNET_2)
 	# - PRIVATE_SUBNET_3
 	echo '# The PRIVATE_SUBNET_3: ' $(call ssm-prod,PRIVATE_SUBNET_3)
+	# Deploy the lambda with sam
+	sam package --profile $(TRAVIS_PROFILE_PROD) --template-file template.yaml --s3-bucket $(call ssm-prod,S3_BUCKET_NAME) --s3-prefix $(DEPLOY_S3_PREFIX) --output-template-file packaged.yaml
+	sam deploy --profile $(TRAVIS_PROFILE_PROD) --template-file ./packaged.yaml --stack-name $(STACK_NAME) --capabilities CAPABILITY_IAM \
+	--parameter-overrides DefaultSecurityGroup=$(call ssm-prod,DEFAULT_SECURITY_GROUP) PrivateSubnets=$(call ssm-prod,PRIVATE_SUBNET_1),$(call ssm-prod,PRIVATE_SUBNET_2),$(call ssm-prod,PRIVATE_SUBNET_3)
 	# END this is `prod` in Makefile
 
 demo: build
-	sam package --profile $(TRAVIS_PROFILE_DEMO) --template-file template.yaml --s3-bucket $(call ssm-demo,S3_BUCKET_NAME) --s3-prefix $(DEPLOY_S3_PREFIX) --output-template-file packaged.yaml
-	sam deploy --profile $(TRAVIS_PROFILE_DEMO) --template-file ./packaged.yaml --stack-name $(STACK_NAME) --capabilities CAPABILITY_IAM \
-	--parameter-overrides DefaultSecurityGroup=$(call ssm-demo,DEFAULT_SECURITY_GROUP),$(call ssm-demo,LAMBDA_TO_RDS_SECURITY_GROUP)  PrivateSubnets=$(call ssm-demo,PRIVATE_SUBNET_1),$(call ssm-demo,PRIVATE_SUBNET_2),$(call ssm-demo,PRIVATE_SUBNET_3)
 	# add more info to facilitate debugging
 	# START this is `demo` in Makefile
 	# The current TRAVIS_PROFILE is: 
@@ -152,6 +151,10 @@ demo: build
 	echo '# The PRIVATE_SUBNET_2' $(call ssm-demo,PRIVATE_SUBNET_2)
 	# - PRIVATE_SUBNET_3
 	echo '# The PRIVATE_SUBNET_3' $(call ssm-demo,PRIVATE_SUBNET_3)
+	# Deploy the lambda with sam
+	sam package --profile $(TRAVIS_PROFILE_DEMO) --template-file template.yaml --s3-bucket $(call ssm-demo,S3_BUCKET_NAME) --s3-prefix $(DEPLOY_S3_PREFIX) --output-template-file packaged.yaml
+	sam deploy --profile $(TRAVIS_PROFILE_DEMO) --template-file ./packaged.yaml --stack-name $(STACK_NAME) --capabilities CAPABILITY_IAM \
+	--parameter-overrides DefaultSecurityGroup=$(call ssm-demo,DEFAULT_SECURITY_GROUP) PrivateSubnets=$(call ssm-demo,PRIVATE_SUBNET_1),$(call ssm-demo,PRIVATE_SUBNET_2),$(call ssm-demo,PRIVATE_SUBNET_3)
 	# END this is demo in Makefile
 
 lint:
